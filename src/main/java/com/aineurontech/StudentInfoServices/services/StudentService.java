@@ -33,8 +33,8 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
-//    public void deleteStudentById(Integer id){
-//        studentRepository.delete(id);
-//    }
+    public void deleteStudent(Integer id){
+        studentRepository.deleteById(id);
+    }
 
 }

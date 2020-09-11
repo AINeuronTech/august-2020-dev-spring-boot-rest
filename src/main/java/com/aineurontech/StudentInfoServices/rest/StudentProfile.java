@@ -48,13 +48,13 @@ public class StudentProfile {
 
     }
 
-    @DeleteMapping(value = "/{id}", headers = "Accept=application/json")
-    public ResponseEntity<String> updateProfile(@PathVariable("id") Integer id){
+    @DeleteMapping(value = "/delete-profile/{id}", headers = "Accept=application/json")
+    public ResponseEntity<String> deleteProfile(@PathVariable Integer id){
         Optional<Student> student = studentService.findById(id);
         if(student==null){
             return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
         }
-        //studentService.deleteStudentById(id);
+        studentService.deleteStudent(id);
         return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 
     }
