@@ -4,11 +4,14 @@ package com.aineurontech.StudentInfoServices.rest;
 import com.aineurontech.StudentInfoServices.entity.Student;
 import com.aineurontech.StudentInfoServices.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -21,9 +24,39 @@ public class StudentProfile {
         this.studentService = studentService;
     }
 
-    @GetMapping("/profile")
+    @GetMapping(value = "/get-profile", headers = "Accept=application/json")
     public List<Student> getProfile(){
         return studentService.retrieveStudent();
+    }
+
+    @PostMapping(value = "/post-profile", headers = "Accept=application/json")
+    public ResponseEntity<Void> createProfile(@RequestBody Student student, UriComponentsBuilder uriComponentsBuilder){
+        studentService.createStudent(student);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(uriComponentsBuilder.path("/api/{id}").buildAndExpand(student.getId()).toUri());
+        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+    }
+
+    @PutMapping(value = "/update-profile", headers = "Accept=application/json")
+    public ResponseEntity<String> updateProfile(@RequestBody Student currentStudent){
+        Optional<Student> updatedStudent = studentService.findById(currentStudent.getId());
+        if(updatedStudent==null){
+            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+        }
+        studentService.update(currentStudent,currentStudent.getId());
+        return new ResponseEntity<String>(HttpStatus.OK);
+
+    }
+
+    @DeleteMapping(value = "/{id}", headers = "Accept=application/json")
+    public ResponseEntity<String> updateProfile(@PathVariable("id") Integer id){
+        Optional<Student> student = studentService.findById(id);
+        if(student==null){
+            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+        }
+        //studentService.deleteStudentById(id);
+        return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+
     }
 
 
