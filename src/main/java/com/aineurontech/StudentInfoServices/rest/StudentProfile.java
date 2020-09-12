@@ -29,6 +29,11 @@ public class StudentProfile {
         return studentService.retrieveStudent();
     }
 
+    @GetMapping(value = "/get-profile/{id}", headers = "Accept=application/json")
+    public Optional<Student> getSingleProfile(@PathVariable Integer id){
+        return studentService.findById(id);
+    }
+
     @PostMapping(value = "/post-profile", headers = "Accept=application/json")
     public ResponseEntity<Void> createProfile(@RequestBody Student student, UriComponentsBuilder uriComponentsBuilder){
         studentService.createStudent(student);
@@ -58,6 +63,5 @@ public class StudentProfile {
         return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 
     }
-
 
 }
